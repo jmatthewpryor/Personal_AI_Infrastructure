@@ -19,6 +19,8 @@
 | "Create a new bundle" | `PAIBundleTemplate.md` |
 | "What's wrong with my PAI setup?" | `CheckPAIState.md` |
 | "Help me make a pack for X" | `PAIPackTemplate.md` |
+| "Fix a bug in PAI" | `PAIWorkflow.md` |
+| "How do I work on PAI?" | `PAIWorkflow.md` |
 
 **How to use:**
 1. Read the relevant file completely
@@ -33,6 +35,33 @@ This directory contains two types of resources:
 
 - **Diagnostic Tools** - Utilities you run to check, analyze, or manage a PAI installation
 - **Creation Templates** - Specifications for creating new packs and bundles
+
+---
+
+## Workflow Guides
+
+### PAIWorkflow.md
+
+**PAI Development Workflow**
+
+Defines how to work on PAI infrastructure - fixing bugs, adding features, and customizing installations.
+
+**Core principle:** Installations are deployments of PAI source, not forks. This enables:
+- Bug fixes flow back to source for everyone
+- Personal customizations stay local
+- Clear tracking of what's installed
+
+**What it covers:**
+- File classification (source-managed vs local-only)
+- Bug fix workflow (edit source → sync → commit)
+- Feature addition workflow
+- Customization workflow
+- Manifest system for tracking drift
+
+**AI invocation:**
+```
+Read PAIWorkflow.md before making changes to hooks or skills.
+```
 
 ---
 
@@ -113,6 +142,7 @@ Read PAIBundleTemplate.md and help me create a bundle for [USE CASE].
 
 | File | Type | Purpose | AI Trigger |
 |------|------|---------|------------|
+| PAIWorkflow.md | Workflow | How to work on PAI infrastructure | "fix a bug", "how do I work on PAI" |
 | CheckPAIState.md | Diagnostic | Check PAI installation health | "check my PAI" |
 | PAIPackTemplate.md | Template | Create new packs | "create a pack" |
 | PAIBundleTemplate.md | Template | Create new bundles | "create a bundle" |

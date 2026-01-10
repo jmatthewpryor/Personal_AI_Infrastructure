@@ -1,0 +1,62 @@
+{
+  "$schema": "https://pai.danielmiessler.com/schemas/manifest-v1.json",
+  "manifest_version": "1.0.0",
+  "installation_name": "{{INSTALLATION_NAME}}",
+  "installation_owner": "{{OWNER_NAME}}",
+  "created": "{{CREATED_DATE}}",
+  "last_sync": "{{CREATED_DATE}}",
+
+  "source": {
+    "type": "local",
+    "path": "{{PAI_SOURCE_PATH}}",
+    "remote": "https://github.com/danielmiessler/Personal_AI_Infrastructure",
+    "branch": "main"
+  },
+
+  "installed_packs": {
+    "pai-core-install": {
+      "version": "{{VERSION}}",
+      "installed": "{{CREATED_DATE}}",
+      "status": "active"
+    }
+  },
+
+  "local_only_patterns": {
+    "description": "Files that are personal and should never sync upstream to PAI source",
+    "patterns": [
+      ".env",
+      "pai-manifest.json",
+      "skills/CORE/SKILL.md",
+      "skills/CORE/Contacts.md",
+      "skills/CORE/CoreStack.md",
+      "skills/Art/Aesthetic.md",
+      "MEMORY/**",
+      "history/**",
+      "debug/**",
+      "plans/**",
+      "projects/**",
+      "file-history/**"
+    ]
+  },
+
+  "template_derived": {
+    "description": "Files that started from PAI templates but are personalized. Compare periodically for new ideas.",
+    "files": []
+  },
+
+  "source_managed": {
+    "description": "Files that come from PAI packs. Edit in source, sync to installation.",
+    "mappings": [
+      {
+        "source": "Packs/pai-hook-system/src/*.ts",
+        "destination": "hooks/*.ts"
+      },
+      {
+        "source": "Packs/pai-hook-system/src/lib/*.ts",
+        "destination": "hooks/lib/*.ts"
+      }
+    ]
+  },
+
+  "drift_log": []
+}
