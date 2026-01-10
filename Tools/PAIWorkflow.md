@@ -6,19 +6,32 @@
 
 ## Core Principle
 
-**Installations are deployments of PAI source, not forks.**
+**Installations are deployments of PAI, via a fork.**
 
 ```
-PAI Source Repository        User Installation
-(~/proj/personal/PAI)   →    (~/.claude or $PAI_DIR)
-     Blueprint                 Deployment
+danielmiessler/PAI (upstream)     Canonical community source
+        ↓ fork
+your-username/PAI (origin)        Your fork
+        ↓ clone
+~/proj/personal/PAI               Local working copy
+        ↓ install                 (main = upstream, local = personal)
+~/.claude or $PAI_DIR             Deployment
 ```
 
-This separation enables:
-- Bug fixes flow back to source for everyone
-- Personal customizations stay local
-- Clear tracking of what's installed
-- Bi-directional updates possible
+This architecture enables:
+- **Upstream sync**: Pull community updates when ready
+- **Personal changes**: Keep in fork's `local` branch
+- **Contribution**: PR from fork to upstream
+- **Clear tracking**: Know what's yours vs community
+
+### Branch Strategy
+
+| Branch | Purpose |
+|--------|---------|
+| `main` | Tracks `upstream/main` - community canonical |
+| `local` | Personal changes - never goes upstream |
+| `fix/*` | Bug fixes intended for upstream PR |
+| `feat/*` | Features intended for upstream PR |
 
 ---
 
@@ -61,70 +74,142 @@ This separation enables:
 
 ## Workflow: Fixing a Bug
 
+### Step 1: Identify and Classify
+
 ```
-┌─────────────────────────────────────────────────────────┐
-│ 1. IDENTIFY in installation (~/.claude)                 │
-│    "This hook is failing because..."                    │
-└─────────────────────────────────────────────────────────┘
-                          ↓
-┌─────────────────────────────────────────────────────────┐
-│ 2. LOCATE source pack                                   │
-│    ~/proj/personal/PAI/Packs/pai-hook-system/src/       │
-└─────────────────────────────────────────────────────────┘
-                          ↓
-┌─────────────────────────────────────────────────────────┐
-│ 3. FIX in PAI source FIRST                              │
-│    Edit the file in Packs/*/src/                        │
-└─────────────────────────────────────────────────────────┘
-                          ↓
-┌─────────────────────────────────────────────────────────┐
-│ 4. COPY fix to installation                             │
-│    cp ~/proj/personal/PAI/Packs/*/src/file ~/.claude/   │
-└─────────────────────────────────────────────────────────┘
-                          ↓
-┌─────────────────────────────────────────────────────────┐
-│ 5. TEST in installation                                 │
-│    Verify the fix works                                 │
-└─────────────────────────────────────────────────────────┘
-                          ↓
-┌─────────────────────────────────────────────────────────┐
-│ 6. COMMIT PAI source                                    │
-│    git add/commit/push in ~/proj/personal/PAI           │
-└─────────────────────────────────────────────────────────┘
-                          ↓
-┌─────────────────────────────────────────────────────────┐
-│ 7. UPDATE manifest                                      │
-│    Add entry to drift_log in pai-manifest.json          │
-└─────────────────────────────────────────────────────────┘
+1. IDENTIFY in installation (~/.claude)
+   "This hook is failing because..."
+
+2. ASK: Should this fix go upstream?
+   - YES → Benefits all PAI users → Create PR
+   - NO → Personal/installation-specific → Local branch only
+```
+
+### If Contributing Upstream (PR)
+
+```bash
+cd ~/proj/personal/PAI
+
+# Start from fresh main
+git checkout main
+git fetch upstream
+git merge upstream/main
+
+# Create fix branch
+git checkout -b fix/descriptive-name
+
+# Make the fix in Packs/*/src/
+# Copy to installation for testing
+cp Packs/*/src/file ~/.claude/path/
+
+# Test, then commit
+git add . && git commit -m "fix(pack-name): description"
+git push origin fix/descriptive-name
+
+# Create PR to upstream via GitHub
+# After merge: git branch -d fix/descriptive-name
+```
+
+### If Local-Only Fix
+
+```bash
+cd ~/proj/personal/PAI
+
+# Work on local branch
+git checkout local
+
+# Make the fix in Packs/*/src/
+# Copy to installation for testing
+cp Packs/*/src/file ~/.claude/path/
+
+# Test, then commit
+git add . && git commit -m "fix(local): description"
+git push origin local
+
+# Update manifest drift_log
 ```
 
 ---
 
 ## Workflow: Adding a Feature
 
+### If Contributing Upstream (PR)
+
+```bash
+cd ~/proj/personal/PAI
+
+# Start from fresh main
+git checkout main
+git fetch upstream
+git merge upstream/main
+
+# Create feature branch
+git checkout -b feat/descriptive-name
+
+# Implement in Pack's src/ directory
+# - Add all necessary files
+# - Update INSTALL.md with installation steps
+# - Update VERIFY.md with verification checks
+
+# Test by installing to your installation
+# Run the INSTALL.md steps, verify with VERIFY.md
+
+# Commit and push
+git add . && git commit -m "feat(pack-name): description"
+git push origin feat/descriptive-name
+
+# Create PR to upstream via GitHub
 ```
-1. DESIGN in PAI source
-   - Determine which pack it belongs to
-   - If new pack needed, use PAIPackTemplate.md
 
-2. IMPLEMENT in Pack's src/ directory
-   - Add all necessary files
-   - Update INSTALL.md with installation steps
-   - Update VERIFY.md with verification checks
+### If Personal Feature
 
-3. TEST by installing to user installation
-   - Run the INSTALL.md steps
-   - Verify with VERIFY.md
+```bash
+cd ~/proj/personal/PAI
 
-4. ITERATE until working
-   - Fix issues in source
-   - Re-sync to installation
-   - Test again
+# Work on local branch
+git checkout local
 
-5. COMMIT when complete
-   - git add/commit/push PAI source
-   - Update manifest with new pack version
+# Implement in Pack's src/ directory
+# Test by installing to your installation
+
+# Commit and push
+git add . && git commit -m "feat(local): description"
+git push origin local
+
+# Update manifest with new feature
 ```
+
+---
+
+## Workflow: Syncing with Upstream
+
+When the community (upstream) has updates you want:
+
+```bash
+cd ~/proj/personal/PAI
+
+# 1. Update main from upstream
+git checkout main
+git fetch upstream
+git merge upstream/main
+git push origin main
+
+# 2. Bring updates into local branch
+git checkout local
+git merge main
+# Resolve any conflicts (your local changes vs upstream)
+git push origin local
+
+# 3. Re-install affected packs to your installation
+# Copy updated files from Packs/*/src/ to ~/.claude/
+```
+
+### Conflict Resolution
+
+When merging upstream into local:
+- **Your change is better**: Keep yours, consider PR to upstream
+- **Upstream is better**: Accept theirs
+- **Both needed**: Merge carefully, test thoroughly
 
 ---
 
