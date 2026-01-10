@@ -15,6 +15,8 @@
 | User Request | File to Reference |
 |--------------|-------------------|
 | "Check my PAI installation" | `CheckPAIState.md` |
+| "Compare my files to templates" | `CompareTemplates.md` |
+| "What customizations am I missing?" | `CompareTemplates.md` |
 | "Create a new pack" | `PAIPackTemplate.md` |
 | "Create a new bundle" | `PAIBundleTemplate.md` |
 | "What's wrong with my PAI setup?" | `CheckPAIState.md` |
@@ -89,6 +91,55 @@ Read CheckPAIState.md and check my PAI state. Give me recommendations.
 
 ---
 
+### CompareTemplates.md
+
+**Template Comparison Tool**
+
+A diagnostic workflow for comparing your personalized PAI files against canonical templates to discover new customization options.
+
+**What it does:**
+- Identifies template-derived files in your installation
+- Compares section headings between your files and canonical templates
+- Finds new configuration options you may have missed
+- Compares directory structures for new files
+- Surfaces customization opportunities from newer template versions
+
+**Key principle:** Your personalized files were created from templates at a point in time. PAI evolves—new templates add personality calibration, security protocols, and other features you might want.
+
+**AI invocation:**
+```
+Read CompareTemplates.md and compare my PAI files against the canonical templates.
+```
+
+**Output:** A comparison report showing new sections, fields, and files available in templates that your installation doesn't have.
+
+---
+
+## Workflow Guides
+
+### PAIWorkflow.md
+
+**PAI Development Workflow**
+
+Defines how to work on PAI infrastructure—fixing bugs, adding features, and customizing installations.
+
+**What it covers:**
+- Fork architecture (upstream → fork → local clone → installation)
+- Branch strategy (main tracks upstream, local for personal changes)
+- File classification (source-managed vs local-only)
+- Bug fix workflow (edit source → sync → commit)
+- Feature addition workflow
+- Upstream sync workflow
+
+**Key principle:** Installations are deployments of PAI source, via a fork. This enables bug fixes to flow upstream while personal customizations stay local.
+
+**AI invocation:**
+```
+Read PAIWorkflow.md before making changes to hooks or skills.
+```
+
+---
+
 ## Creation Templates
 
 ### PAIPackTemplate.md
@@ -144,6 +195,8 @@ Read PAIBundleTemplate.md and help me create a bundle for [USE CASE].
 |------|------|---------|------------|
 | PAIWorkflow.md | Workflow | How to work on PAI infrastructure | "fix a bug", "how do I work on PAI" |
 | CheckPAIState.md | Diagnostic | Check PAI installation health | "check my PAI" |
+| CompareTemplates.md | Diagnostic | Compare files to canonical templates | "what customizations am I missing" |
+| PAIWorkflow.md | Workflow | How to work on PAI infrastructure | "fix a bug", "how do I work on PAI" |
 | PAIPackTemplate.md | Template | Create new packs | "create a pack" |
 | PAIBundleTemplate.md | Template | Create new bundles | "create a bundle" |
 
