@@ -130,9 +130,10 @@ export function extractVoiceCompletion(text: string): string {
   text = text.replace(/<system-reminder>[\s\S]*?<\/system-reminder>/g, '');
 
   // Use global flag and find LAST match (voice line is at end of response)
+  // Require line-start to prevent matching mentions in explanation text
   const completedPatterns = [
-    new RegExp(`🗣️\\s*\\*{0,2}${DA_IDENTITY.name}:?\\*{0,2}\\s*(.+?)(?:\\n|$)`, 'gi'),
-    /🎯\s*\*{0,2}COMPLETED:?\*{0,2}\s*(.+?)(?:\n|$)/gi,
+    new RegExp(`(?:^|\\n)🗣️\\s*\\*{0,2}${DA_IDENTITY.name}:?\\*{0,2}\\s*(.+?)(?:\\n|$)`, 'gim'),
+    /(?:^|\n)🎯\s*\*{0,2}COMPLETED:?\*{0,2}\s*(.+?)(?:\n|$)/gim,
   ];
 
   for (const pattern of completedPatterns) {
@@ -162,9 +163,10 @@ export function extractCompletionPlain(text: string): string {
   text = text.replace(/<system-reminder>[\s\S]*?<\/system-reminder>/g, '');
 
   // Use global flag and find LAST match (voice line is at end of response)
+  // Require line-start to prevent matching mentions in explanation text
   const completedPatterns = [
-    new RegExp(`🗣️\\s*\\*{0,2}${DA_IDENTITY.name}:?\\*{0,2}\\s*(.+?)(?:\\n|$)`, 'gi'),
-    /🎯\s*\*{0,2}COMPLETED:?\*{0,2}\s*(.+?)(?:\n|$)/gi,
+    new RegExp(`(?:^|\\n)🗣️\\s*\\*{0,2}${DA_IDENTITY.name}:?\\*{0,2}\\s*(.+?)(?:\\n|$)`, 'gim'),
+    /(?:^|\n)🎯\s*\*{0,2}COMPLETED:?\*{0,2}\s*(.+?)(?:\n|$)/gim,
   ];
 
   for (const pattern of completedPatterns) {
@@ -212,7 +214,7 @@ export function extractStructuredSections(text: string): StructuredResponse {
     results: /✅\s*RESULTS:\s*(.+?)(?:\n|$)/i,
     status: /📊\s*STATUS:\s*(.+?)(?:\n|$)/i,
     next: /➡️\s*NEXT:\s*(.+?)(?:\n|$)/i,
-    completed: new RegExp(`(?:🗣️\\s*${DA_IDENTITY.name}:|🎯\\s*COMPLETED:)\\s*(.+?)(?:\\n|$)`, 'i'),
+    completed: new RegExp(`(?:^|\\n)(?:🗣️\\s*${DA_IDENTITY.name}:|🎯\\s*COMPLETED:)\\s*(.+?)(?:\\n|$)`, 'im'),
   };
 
   for (const [key, pattern] of Object.entries(patterns)) {
